@@ -3,7 +3,7 @@ module "eks" {
   version = "~> 21.0"
 
   name               = local.common_name
-  kubernetes_version = "1.34"
+  kubernetes_version = var.eks_version
 
   # Mandatory
   addons = {
@@ -14,7 +14,9 @@ module "eks" {
     kube-proxy             = {}
     vpc-cni                = {
       before_compute = true
+      enable_network_policy = true
     }
+    metrics-server = {}
   }
 
   # Optional
@@ -37,9 +39,11 @@ module "eks" {
   # EKS Managed Node Group(s)
   eks_managed_node_groups = {
     blue = {
+      create = var.enable_blue
+      kubernetes_version = var.blue_version
       # Starting on 1.30, AL2023 is the default AMI type for EKS managed node groups
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.small","t3.medium","c3.large","c4.large","c5.large","c5d.large","c5n.large","c5a.large","m5.xlarge","m4.xlarge"]
+      instance_types = ["t3.small","t3.medium","m5.xlarge","m4.xlarge"]
       capacity_type = "SPOT"
 
       iam_role_additional_policies = {
@@ -55,6 +59,38 @@ module "eks" {
         http_endpoint = "enabled"
         http_put_response_hop_limit = 2
         http_tokens = "required"
+      }
+
+      labels = {
+        nodegroup = "blue"
+      }
+    }
+
+    green = {
+      create = var.enable_green
+      kubernetes_version = var.green_version
+      # Starting on 1.30, AL2023 is the default AMI type for EKS managed node groups
+      ami_type       = "AL2023_x86_64_STANDARD"
+      instance_types = ["t3.small","t3.medium","m5.xlarge","m4.xlarge"]
+      capacity_type = "SPOT"
+
+      iam_role_additional_policies = {
+        EBS = "arn:aws:iam::aws:policy/AmazonEBSCSIDriverPolicyV2"
+        EFS = "arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy"
+      }
+      min_size     = 2
+      max_size     = 2
+      desired_size = 2
+
+      # This is required AWS LoadBalancerController
+      metadata_options = {
+        http_endpoint = "enabled"
+        http_put_response_hop_limit = 2
+        http_tokens = "required"
+      }
+
+      labels = {
+        nodegroup = "green"
       }
     }
   }
