@@ -121,7 +121,8 @@ resource "aws_security_group_rule" "jenkins_ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks = ["${chomp(data.http.my_public_ip.response_body)}/32"]
+  cidr_blocks = ["0.0.0.0/0"]
+  #cidr_blocks = ["${chomp(data.http.my_public_ip.response_body)}/32"]
   security_group_id = local.jenkins_sg_id
 }
 
@@ -130,7 +131,8 @@ resource "aws_security_group_rule" "jenkins_agent_ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks = ["${chomp(data.http.my_public_ip.response_body)}/32"]
+  cidr_blocks = ["0.0.0.0/0"]
+  #cidr_blocks = ["${chomp(data.http.my_public_ip.response_body)}/32"]
   security_group_id = local.jenkins_agent_sg_id
 }
 
@@ -157,6 +159,7 @@ resource "aws_security_group_rule" "sonar_ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks = ["${chomp(data.http.my_public_ip.response_body)}/32"]
+  cidr_blocks = ["0.0.0.0/0"]
+  #cidr_blocks = ["${chomp(data.http.my_public_ip.response_body)}/32"]
   security_group_id = local.sonar_sg_id
 }
