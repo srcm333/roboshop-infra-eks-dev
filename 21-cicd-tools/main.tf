@@ -1,10 +1,18 @@
 resource "aws_instance" "jenkins" {
   count = var.jenkins ? 1 : 0
   ami           = local.ami_id
-  instance_type = "t3.micro"
+  instance_type = "t3.small"
   subnet_id = local.public_subnet_id
   vpc_security_group_ids = [local.jenkins_sg_id]
   user_data = file("jenkins.sh")
+
+  instance_market_options {
+    market_type = "spot"
+
+    spot_options {
+      spot_instance_type = "persistent"
+    }
+  }
 
   root_block_device {
     volume_size = 50
@@ -60,6 +68,14 @@ resource "aws_instance" "sonarqube" {
   vpc_security_group_ids = [local.sonar_sg_id]
   subnet_id = local.public_subnet_id #replace your Subnet in default VPC
   key_name = "daws-90s"
+
+  instance_market_options {
+    market_type = "spot"
+
+    spot_options {
+      spot_instance_type = "persistent"
+    }
+  }
   # need more for terraform
   /* root_block_device {
     volume_size = 20
