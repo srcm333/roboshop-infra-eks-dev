@@ -110,3 +110,23 @@ and `exit 1` if any returned alert's severity is `high` or `critical`.
 | Jenkins agent | `jenkins-agent.<your-domain>` (private, SSH only) |
 | Jenkins admin password | `sudo cat /var/lib/jenkins/secrets/initialAdminPassword` |
 | SonarQube default login | `/opt/default-sonar-login.txt` on the sonar box |
+
+
+Step 2 — Check Jenkins Global Shared Libraries
+Go to Jenkins:
+Manage Jenkins → System
+
+Then find:
+Global Trusted Pipeline Libraries
+or
+Global Pipeline Libraries
+
+You should have an entry similar to:
+Setting	Value
+Name	jenkins-shared-library
+Default version	main or feature-1
+Retrieval method	Modern SCM
+SCM	Git
+Project Repository	https://github.com/srcm333/jenkins-shared-library.git
+
+The Name is extremely important.
